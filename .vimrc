@@ -1,4 +1,6 @@
-"last modify::2013-8-12 20:39:50
+"author:mang
+"last modify::2014-02-28 19:54:09
+"用于mac下vim的配置
 "#########规范说明####################
 "建立于2012-04-26
 "设置标题参考：#########Vimwiki相关设置#########  vimwiki与前面的#号之间不要有任何的字符，vimwiki之后可以随便添加汉字，以方便阅读。这样做的目的是以后可以通过搜索 #Vimwiki 快速定位到vimwiki设置区域。
@@ -51,24 +53,136 @@
 	"map <C-F5> :call Debug()<CR>
 	"nmap <leader>cw   :cw 5<cr>
 	"nmap q :close<cr>
-"---------git
-	"map <leader>gs :GitStatus<cr>
-	"map <leader>gc :GitCommit<cr>
-	"map <leader>ga :GitAdd<cr>
-	"map <leader>gp :GitPush<cr>
-	"map <leader>gpa :GitPush --all<cr>
-	"map <leader>gL :GitPull<cr>
-	"map <leader>gl :GitLog<cr>
 "---------vimim
 	"CTRL+ ^ 各中文输入法间切换
 	"CTRL+ - 打开/关闭中文输入法
 	"CTRL+ H 退格
 "append hotkey hotkye设置在上面添加
-"##############global setting全局设置##########################
+
+"-----------------------------------------------------------------------------
+"以下内容来自$VIMRUNTIME/vimrc_example.vim
+"我是在网上看到说要从这里拷标准配置过来
+"-----------------------------------------------------------------------------
+
+" An example for a vimrc file.
+"
+" Maintainer:	Bram Moolenaar <Bram@vim.org>
+" Last change:	2011 Apr 15
+"
+" To use it, copy it to
+"     for Unix and OS/2:  ~/.vimrc
+"	      for Amiga:  s:.vimrc
+"  for MS-DOS and Win32:  $VIM\_vimrc
+"	    for OpenVMS:  sys$login:.vimrc
+
+" When started as "evim", evim.vim will already have done these settings.
+if v:progname =~? "evim"
+  finish
+endif
+
+" Use Vim settings, rather than Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+set nocompatible
+
+" allow backspacing over everything in insert mode
+"在Insert模式下，设置Backspace键如何删除光标前边的字符。这里三个值分别表示空白字符，分行符和插入模式之前的字符。  
+set backspace=indent,eol,start
+
+
+if has("vms")
+  set nobackup		" do not keep a backup file, use versions instead
+else
+  set backup		" keep a backup file
+endif
+set history=50		" keep 50 lines of command line history
+set ruler		" show the cursor position all the time
+set showcmd		" display incomplete commands
+set incsearch		" do incremental searching
+
+" For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
+" let &guioptions = substitute(&guioptions, "t", "", "g")
+
+" Don't use Ex mode, use Q for formatting
+map Q gq
+
+" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+" CTRL-U 在Insert模式下可以删除当前光标所在行所在列之前的所有字符.  Insert模式下，在Enter换行之后，可以立即使用CTRL-U命令删除换行符。  
+inoremap <C-U> <C-G>u<C-U> 
+inoremap <C-U> <C-G>u<C-U>
+
+" In many terminal emulators the mouse works just fine, thus enable it.
+if has('mouse')
+  set mouse=a
+endif
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+
+  " Enable file type detection.
+  " Use the default filetype settings, so that mail gets 'tw' set to 72,
+  " 'cindent' is on in C files, etc.
+  " Also load indent files, to automatically do language-dependent indenting.
+  filetype plugin indent on
+
+  " Put these in an autocmd group, so that we can delete them easily.
+  augroup vimrcEx
+  au!
+
+  " For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it when the position is invalid or when inside an event handler
+  " (happens when dropping a file on gvim).
+  " Also don't do it when the mark is in the first line, that is the default
+  " position when opening a file.
+  autocmd BufReadPost *
+    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+
+  augroup END
+
+else
+
+  set autoindent		" always set autoindenting on
+
+endif " has("autocmd")
+
+" Convenient command to see the difference between the current buffer and the
+" file it was loaded from, thus the changes you made.
+" Only define it when not defined already.
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+		  \ | wincmd p | diffthis
+endif
+
+
+
+
+
+"-----------------------------------------------------------------------------
+"下面是我的配置--vim全局配置
+"-----------------------------------------------------------------------------
 "pathogen 的设置，pathogen用于管理插件，以后安装插件在bundle目录下就ok.
 call pathogen#infect()
-set nocompatible
-source $VIMRUNTIME/vimrc_example.vim
+
+
+"vim不产生备份文件，备份文件存放在~/vimtmp 目录下。若是windows系统，则~目录指的是C:\Documents and Settings\用户名
+"set backup
+"set writebackup
+"set backupdir=~/.vimtmp/
+set nobackup
+
+
 "注释掉下一行是为了vim的ctrl+v不与windows的冲突。
 "source $VIMRUNTIME/mswin.vim
 behave mswin
@@ -96,17 +210,55 @@ function MyDiff()
   endif
   silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq
 endfunction
-"以下内容全部都由mang添加
+
+"-----------------------------------------------------------------------------------
+"搜索相关的配置
+"-----------------------------------------------------------------------------------
 "搜索时智能忽略大小写。即如果搜索词全是小写，则忽略大小写，如果有一个大写则大小写敏感
 set ignorecase smartcase
+"渐近式匹配incremental search 即搜索时 则会自动把光标定位到匹配处"
+set incsearch
+"不高亮显示搜索到字符"
+"set nohlsearch
+"按下esc键后取消搜索高亮
+nnoremap <esc> : noh<return><esc>
+
+
+
 " 打开语法高亮
 syntax enable
 " 配色方案
-colorscheme desert
+"colorscheme desert
+set background=dark
+colorscheme solarized
 " 字体、字号
 set guifont=Courier\ New:h20
+
+
 "显示行号	
 set nu
+"设置自动折行
+set wrap
+"设置自动缩进
+set ai!  
+"突出显示当前行
+set cursorline 
+"设置命令行的行数"
+set cmdheight=2 
+
+
+"显示特殊字符"
+"set list
+"设置tab键宽度
+set tabstop=4
+"设置每层缩进数
+set shiftwidth=4
+
+"自动切换目录到当前编辑的文件所以路径
+set autochdir
+"-----------------------------------------------------------------------------------
+"编码相关
+"-----------------------------------------------------------------------------------
 "下面5行用来解决gVim菜单栏和右键菜单乱码问题"
 set encoding=utf8
 set langmenu=zh_CN.UTF-8
@@ -119,20 +271,26 @@ language message zh_CN.UTF-8
 "set fenc=chinese
 "也不知道为什么要加它，可还是加上了。fencs：打开文件时猜测编码格式的列表
 set fileencodings=utf-8,gb2312,ucs-bom,euc-cn,euc-tw,gb18030,gbk,cp936
+
+
+"-----------------------------------------------------------------------------------
 " ######### 括号匹配 ######### "
+"-----------------------------------------------------------------------------------
+" 显示匹配的括号
+set showmatch
 " 设置括号、引号自动完成
 :inoremap ( ()<ESC>i
-:inoremap ) <c-r>=ClosePair(')')<CR>
+:inoremap ) c-r>=ClosePair(')')<CR>
 "注释掉原因，为了设置Voom的快捷键[1 [2 [3
 ":inoremap { {}<ESC>i
-":inoremap } <c-r>=ClosePair('}')<CR>
+":inoremap } <c-r>=ClosePair('')<CR>
 :inoremap [ []<ESC>i
 :inoremap ] <c-r>=ClosePair(']')<CR>
 :inoremap < <><ESC>i
 	
 :inoremap > <c-r>=ClosePair('>')<CR>
-":inoremap " ""<ESC>i
-"":inoremap ' ''<ESC>i
+":inoremap " <ESC>i
+:inoremap ' ''<ESC>i
 :inoremap ` ``<ESC>i
 function ClosePair(char)
 	if getline('.')[col('.') - 1] == a:char
@@ -141,38 +299,15 @@ function ClosePair(char)
 		return a:char
 	endif
 endf
-" 窗口启动时自动最大化
-au GUIEnter * simalt ~x
-"设置自动缩进
-set ai!  
-"渐近式匹配incremental search 即搜索时 则会自动把光标定位到匹配处"
-set incsearch
-"不高亮显示搜索到字符"
-"set nohlsearch
-"按下esc键后取消搜索高亮
-nnoremap <esc> : noh<return><esc>
-"突出显示当前行
-set cursorline 
-"设置命令行的行数"
-set cmdheight=2 
-"显示特殊字符"
-"set list
-"设置tab键宽度
-set tabstop=4
-"设置每层缩进数
-set shiftwidth=4
-"设置小键盘数字键1和大键盘1 映射到  跳转到行末
-"map <k1> : <esc>$
-"map 1 : <esc>$  "由于两个1都设置成快捷键在正常模式下将不能输入数字1
 
 
 "设置快速插入当前日期及时间
 "P表示把时间插入到当前光标前面,p表示把时间插入到当前光标后面
-:nnoremap ,mt "=strftime("%c")<CR>p
-"设置快速插入 `时间` 要用 ,mt快捷键 a`表示插入` 然后回到一般模式，然后,mtt 输入时间 然后w 光标向后走一个字
-:map ,mg a`<esc>,mttw<esc>
+:nnoremap ,mt "=strftime("%Y-%m-%d %H:%M:%S")<CR>p
 "设置快速插入当前时间的快捷键,注意必须是大写的H和M,小写的有问题
 :nnoremap ,mtt "=strftime("%H:%M")<CR>p
+"设置快速插入 形如`19:20`格式的时间 ,mt快捷键 a`表示插入` 然后回到一般模式，然后,mtt 输入时间 然后w 光标向后走一个字
+:map ,mg a`<esc>,mttw<esc>
 
 
 "映射快速关闭快捷键
@@ -185,20 +320,16 @@ map ,y "+y
 "设置 . 可用于选择模式下。即以前你想重复只能一行一行的重复。现在可以一次选中重复。
 vnoremap . :normal .<CR>
 
-"vim不产生备份文件，备份文件存放在~/vimtmp 目录下。若是windows系统，则~目录指的是C:\Documents and Settings\用户名
-"set backup
-"set writebackup
-"set backupdir=~/.vimtmp/
-set nobackup
+
+" 重新载入_vimrc的快捷键
+:nmap <Leader>s :source $MYVIMRC
+" 快速打开_vimrc, 也可使用:tabedit $MYVIMRC
+:nmap <Leader>v :e $MYVIMRC<cr>
 
 "自动补全之字典补全 Ctrl+X Ctrl+K 
 "在dict.txt文件中可以自定义自动补全的单词 如<red> <modify>
 set dict=~/.vim/dict.txt
 
-" 重新载入_vimrc
-:nmap <Leader>s :source $MYVIMRC
-" 快速打开_vimrc, 也可使用:tabedit $MYVIMRC
-:nmap <Leader>v :e $MYVIMRC<cr>
 
 "默认分割窗口的切换需要 Ctrl+w 与其他按键配合使用，下面的配置我觉得更加方便一些：
 map <C-j> <C-W>j
@@ -218,15 +349,17 @@ map <silent> <F10> :if &guioptions =~# 'T' <Bar>
         \set guioptions+=T <Bar>
         \set guioptions+=m <Bar>
     \endif<CR>
-"映射F11为全屏快捷键，需要安装gvimfullscreen_win32.zip才可以
-map <F11> <Esc>:call libcallnr("gvimfullscreen.dll", "ToggleFullScreen", 0)<CR> 
 
 "pentadacty 着色设置　这样以后打开_pentadactyrcy就有语法着色了
 au BufRead,BufNewFile _pentadactylrc set filetype=pentadactyl
-"append global 全局设置在上面添加
 
+"使 "p" 命令在Visual模式下用拷贝的字符覆盖被选中的字符。  
+vnoremap p <Esc>:let current_reg = @"<CR>gvs<C-R>=current_reg<CR><Esc> 
 
-"###############Vimwiki相关设置  ########################
+"-----------------------------------------------------------------------------
+"Vimwik相关设置
+"-----------------------------------------------------------------------------
+
 "以下内容加于2011年8月11日18时40分54秒
 "安装官方文档的要求，需要确保 vimrc 文件中有如下的设置 也不知道为什么
 set nocompatible
@@ -338,9 +471,13 @@ map ,ms : <esc>:VimwikiSearch
 map ,mn : <esc>:lnext <Return>
 map ,mp : <esc>:lprevious <Return>
 map ,mo : <esc>:lopen <Return>
-"append vimwiki vimwiki 设置在上面添加
-" ########calender的设置##################
+
+
+
+"-----------------------------------------------------------------------------
+" calender的设置
 " create:2011年10月24日
+"-----------------------------------------------------------------------------
 "设置日记路径的，但是不灵，可能是因为vimwiki的原因
 "let g:calendar_diary = "E:/diary"
 "定义热键，快速调出Calendar插件
@@ -356,9 +493,11 @@ let g:calendar_weeknm = 1 " WK01
 "append calendar calendar设置在上面添加
 
 
+"-----------------------------------------------------------------------------
+" Voom设置
+" create:2011年12月19日
+"-----------------------------------------------------------------------------
 
-"############Voom的设置################
-"create:2011年12月19日
 "设置Tree区的宽度
 let g:voom_tree_width=20
 "设置为vimwiki快速出现Voom界面的快捷键,一个是vimwiki的 一个是一般的
@@ -384,17 +523,19 @@ set ft=Voomtxt
 "设置全屏的快捷键
  "须光标在编辑区时方可正确使用，因为\\会在编辑区与tree区切换，如果当前在tree区，则执行下方快捷键的结果是关掉编辑区。
 map \f <esc><LocalLeader><LocalLeader>:q<return> 
-"append Voom  Voom设置在上面添加
-"############Taglist的设置################
+
+
+
+"-----------------------------------------------------------------------------
+" Taglist的设置
 "由于Taglist以ctags为基础，所以下面会有些关于ctags的设置
 "create:2012年5月16日
+"-----------------------------------------------------------------------------
 "映射自动生成tags文件的快捷键
 "@see http://blog.csdn.net/bokee/article/details/6633193
 map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR> 
 "这项也不知道什么意思，网上说的，也就这样设了。
 set tags=tags;
-"自动切换目录到当前编辑的文件所以路径
-set autochdir
 "设置ctags.exe的路径，当然也可直接加到系统的环境变量中，这里就不再设置了。本来想设置在vim相关目录下，但因为program有空格没有成功，所以就另设了一个没有空格的路径。
 "注意下方路径是/ 而不是\ windows路径分隔符用\表示。或要用\则应该用两个\ 即\\
 "let Tlist_Ctags_Cmd ="D:/Program\ Files/Vim/vimfiles/bundle/ctags/ctags.exe"
@@ -409,8 +550,13 @@ let Tlist_Exit_OnlyWindow = 1
 nnoremap <silent>  tg :TlistToggle<CR>
 "设置Tlist窗口大小
 let Tlist_WinWidth = 10
-"append Taglist 设置在上面添加
-"##########winManager 设置####################
+
+
+
+"-----------------------------------------------------------------------------
+" winManager的设置 
+"
+"-----------------------------------------------------------------------------
 "通过WinManager插件来将TagList窗口和netrw窗口整合起来
 let g:winManagerWindowLayout='FileExplorer|TagList'
 "映射wm的快捷键
@@ -419,10 +565,14 @@ nmap wm :WMToggle<cr>
 let g:persistentBehaviour=0
 "设置wm窗口宽度
 let g:winManagerWidth=10
-"append winmanager 设置在上面添加
-"##########program 编译、运行程序设置#############
+
+
+
+"-----------------------------------------------------------------------------
+"program 编译、运行程序设置
 "因quickfix与程序编译、运行密切相关，所以下面也有quickfix的配置
 "create 09:59 2012-5-17
+"-----------------------------------------------------------------------------
 "下面这段代码来自于网上　VIM-一键编译单个源文件　http://www.vimer.cn/2009/10/11.html。当按下快捷键时会编译程序并打开错误窗口。有两个一个是编译单个文件　一个是编译多个文件。
  "iswindows是定义的一个全局变量　用于判断系统是linux还是windows
 if(has("win32") || has("win95") || has("win64") || has("win16"))
@@ -550,8 +700,12 @@ endfunc
 "set makeprg="D:/Program Files/MinGW/msys/1.0/bin/make.exe"
 "下面方法来自于vi/vim使用进阶: 剑不离手 quickfix　是可以用的，但只是个小测试
 "set makeprg=gcc\ -Wall\ -omain\ main.c"
-"append program设置在上面添加
-"###############MiniBufExplorer 设置###############
+
+
+
+"-----------------------------------------------------------------------------
+"MiniBufExplorer 设置
+"-----------------------------------------------------------------------------
 "当按下<C-Tab>或<C-S-Tab>光标不但会在各buffer间切换，而且会在当前窗口打开。在用Taglist时不好用，用wimwiki时好用。
 let g:miniBufExplMapCTabSwitchBufs = 1
 "可以使用<C-箭头>激活窗口,由于bufexplorer中映射了<C-right>与<C-left>与这里冲突，所以这里注释掉。
@@ -562,13 +716,21 @@ noremap Q :CMiniBufExplorer<CR>:q<CR>
 noremap tm :TMiniBufExplorer<CR>  
 "设置成0代表总是显示buf窗口，1表示当有一个文件时显示buf,2表示当有两个文件时才显示buf.依次类推.从其字面意思就能看出来morethanone3表示大于3时才有buf
 let g:miniBufExplorerMoreThanOne=3
-"append MiniBufExplorer设置在上面添加
-"##########bufexplorer设置########
+
+
+
+"-----------------------------------------------------------------------------
+"bufexplorer设置
+"-----------------------------------------------------------------------------
 "主要是配合bufexplorer使用，因为buferxplorer新打开文件时会新划分出一个窗口。这里映射一个快速关闭另一个窗口的快捷键.当只有一个窗口，且已保存，且已关闭Minibufexplorer时可以关闭当前窗口。
 :nmap <C-right> :<esc><C-l>:q<cr>
 :nmap <C-left> :<esc><C-h>:q<cr>
-"append bufexplorer设置在上面添加
+
+
+
+"-----------------------------------------------------------------------------
 "##############nerdtree的设置##########
+"-----------------------------------------------------------------------------
 "映射打开、关闭NERDTree窗口的快键键
 nmap <F3> :NERDTree  <CR>
 "where NERD tree window is placed on the screen
@@ -587,47 +749,34 @@ let NERDTreeWinSize = 10 "size of the NERD tree
     	return 1  
 	endfunction  
 	nmap wm :WMToggle<CR>  
-"append nerdtree的设置在上面添加#########
+
+
+"-----------------------------------------------------------------------------
 "###############project设置###############
+"-----------------------------------------------------------------------------
 "映射打开project窗口的快捷键
 nmap <silent> <Leader>P <Plug>ToggleProject
 "append project　的设置在上面添加
 "###########c.vim 设置###############
 "设置c.vim的<leader>键，因为用\不方便.该设置只对文件类型是c cpp的有效。
 let g:C_MapLeader  = ','
-"append c.vim 的设置在上面添加
+
+
+"-----------------------------------------------------------------------------
 "###########SuperTab 设置#################
+"-----------------------------------------------------------------------------
 "下面几行是关于自动补全的设置，与SuperTab无关
 "缺省的，vim会使用下拉菜单和一个preview窗口(预览窗口)来显示匹配项目，下拉菜单列出所有匹配的项目，预览窗口则显示选中项目的详细信息。打开预览窗口会导致下拉菜单抖动，因此我一般都去掉预览窗口的显示，这需要改变’completeopt‘的值
 set completeopt=longest,menu
 "以下是supertab的设置
 "设置supertab的补全类型
 let g:SuperTabDefaultCompletionType = "context"
-"append supertab　的设置在上面添加
-"#################git-vim设置##################
-"下面有些快捷键已经是由该插件默认的了，这里为了统一起见再定义一遍。
-"务必阅读《wiz--git-vim插件的使用》中关于　使用时的诸多规范或限制　因为有些映射是有前提的
-map <leader>gs :GitStatus<cr>
-map <leader>gc :GitCommit<cr>
-map <leader>ga :GitAdd<cr>
-"自动提交的命令 gca取gc
-"auto之意.因为目前提交时跳出的窗口必须手动关掉。有些麻烦，况且有时并不需要输入有用信息。如提交博客
-map <leader>gca :!git commit -a -m "%date%"<cr>
-map <leader>go  <leader>gca<leader>gpo
-"注意如果只写GitPush 则默认的命令是　GitPush origin master
-"如果远程仓库的名字不是origin则会出错，所以最好一开始就把远程仓库的名字配置是origin 即时当前分支不是master，也会push master分支. 本来想用\gp的，但发现映射后并不灵 而是指向了pull命令，可能与gitvim插件冲突了。所以这里设置成\gpo  因为oringin 所以用o
-map <leader>gpo :GitPush<cr>
-"相当于命令git push --all 即把本地所有分支都push到远程
-map <leader>gpa :GitPush --all<cr>
-"这个是我映射的，因为GitLog用的多，所以用小写，这里就用大写。
-map <leader>gL :GitPull<cr>
-map <leader>gl :GitLog<cr>
-"映射统计提交信息的快捷键
-map <leader>gls :GitLog --shortstat --pretty=format:"%ci %cr %an"<cr>
-"因为Git用的多,所以这里映射个快捷键
-map ,g :Git 
-"#################git-vim设置在上面##################
+
+
+
+"-----------------------------------------------------------------------------
 "#################vimim设置在下面##################
+"-----------------------------------------------------------------------------
 "设定循环次序,若为-1则表示彻底关闭循环
 let g:vimim_toggle='wubi,pinyin'
 "let g:vimim_toggle='-1'
@@ -640,8 +789,11 @@ let g:vimim_mode = 'dynamic'
 let g:vimim_map='c-bslash'
 " 彻底关闭云输入，五笔使用者可选
 "let g:vimim_cloud=-1 
-"#################vimim设置在上面##################
+
+
+"-----------------------------------------------------------------------------
 "####################latex设置在下面###################
+"-----------------------------------------------------------------------------
 "我也不理解这些设置，这些设置是从官网上摘来的
 " REQUIRED. This makes vim invoke Latex-Suite when you open a tex file.
 filetype plugin on
@@ -665,4 +817,5 @@ let g:Tex_FormatDependency_pdfm = 'dvi,pdf'
 let g:Tex_CompileRule_pdfs = 'ps2pdf $*.ps'
 let g:Tex_CompileRule_pdfm = 'dvipdfm $*.dvi' 
 map \lp <esc>:TCTarget pdfm<cr>\ll
-"####################latex设置在上面###################
+
+
