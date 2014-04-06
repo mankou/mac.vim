@@ -560,7 +560,7 @@ let Tlist_WinWidth = 10
 "通过WinManager插件来将TagList窗口和netrw窗口整合起来
 let g:winManagerWindowLayout='FileExplorer|TagList'
 "映射wm的快捷键
-nmap wm :WMToggle<cr>
+nmap ,wm :WMToggle<cr>
 "当右边窗口关窗时，自动关闭wm窗口
 let g:persistentBehaviour=0
 "设置wm窗口宽度
@@ -748,7 +748,7 @@ let NERDTreeWinSize = 10 "size of the NERD tree
 	function! NERDTree_IsValid()  
     	return 1  
 	endfunction  
-	nmap wm :WMToggle<CR>  
+	nmap ,wm :WMToggle<CR>  
 
 
 "-----------------------------------------------------------------------------
